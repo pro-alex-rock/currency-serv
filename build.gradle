@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url = uri('https://repo.maven.apache.org/maven2/')
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter:2.5.9-SNAPSHOT'
+    implementation 'org.apache.cxf:cxf-spring-boot-starter-jaxws:3.5.0'
+    implementation group: 'org.apache.cxf', name: 'cxf-rt-ws-security', version: '3.5.0'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools:2.5.9-SNAPSHOT'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.9-SNAPSHOT'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+description = 'currency-serv'
+java.sourceCompatibility = JavaVersion.VERSION_11
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['src/test']
+        }
+    }
+}
+
+tasks.register("example", Wsdl2Java) {
+    toolOptions("currency", Wsdl2Java) {
+        wsdl.set(file("wsdl/currency.wsdl"))
+    }
+}
